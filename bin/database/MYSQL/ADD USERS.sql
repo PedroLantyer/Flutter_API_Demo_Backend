@@ -1,0 +1,1 @@
+INSERT INTO users(username,email,pwd) VALUES ("administrador", "admin@example.com", "12345678"), ("Usuário A", "userA@example.com", "23456789"), ("Usuário B", "userB@example.com", "ABCDEFGHI");
