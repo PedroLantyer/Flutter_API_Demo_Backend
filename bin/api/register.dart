@@ -32,16 +32,19 @@ class Register {
         );
         switch (reqRes["result"]) {
           case "CREATED":
-            return Response(
-              201,
-              body: jsonEncode({"user": user, "isLogged": true}),
-              headers: {"Content-Type": "application/json"},
-            );
+            return Response(201, headers: {"Content-Type": "text/plain"});
           case "DUPLICATE":
-            return Response(409, body: "${reqRes["dupe"]} already in use");
+            return Response(
+              409,
+              body: "${reqRes["dupe"]} already in use",
+              headers: {"Content-Type": "text/plain"},
+            );
           default:
             print(reqRes);
-            return Response.badRequest(body: "Failed to create user");
+            return Response.badRequest(
+              body: "Failed to create user",
+              headers: {"Content-Type": "text/plain"},
+            );
         }
       });
       return router;

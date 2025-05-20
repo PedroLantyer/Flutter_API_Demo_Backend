@@ -17,19 +17,18 @@ class DataBase {
   }
 
   getUser(String username, String password) async {
-    var result = await connection?.execute(
+    IResultSet? result = await connection?.execute(
       "SELECT * FROM users WHERE (username = :username OR email = :username) AND pwd = :pwd",
       {"username": username, "pwd": password},
     );
 
     if (result != null) {
       int rowCount = result.rows.length;
-      if (rowCount > 0) {
-        Map<String, String?> row = result.rows.first.assoc();
+      if (rowCount == 1) {
+        Map<String, dynamic> row = result.rows.first.assoc();
         return row;
       }
     }
-    return null;
   }
 
   createUser(String username, String password, String email) async {

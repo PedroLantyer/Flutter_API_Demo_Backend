@@ -22,15 +22,16 @@ class Login {
           return Response.badRequest(body: "Credentials Missing");
         }
 
-        var row = await db?.getUser(user, password);
-        if (row == null || row.isEmpty == false) {
+        Map<String, dynamic>? row = await db?.getUser(user, password);
+        if (row == null) {
           return Response.forbidden(
-            jsonEncode({"user": null, "isLogged": false}),
+            jsonEncode({"id": null, "user": null}),
             headers: {"Content-Type": "application/json"},
           );
         }
+
         return Response.ok(
-          jsonEncode({"user": row["username"], "isLogged": true}),
+          jsonEncode({"id": row["id"], "user": row["username"]}),
           headers: {"Content-Type": "application/json"},
         );
       });
