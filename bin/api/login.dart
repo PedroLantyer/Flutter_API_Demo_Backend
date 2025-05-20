@@ -10,24 +10,27 @@ class Login {
     Router router = Router();
     try {
       router.post("/login", (Request req) async {
+        if (db == null) {
+          throw Exception("Failed to initialize Database");
+        }
+
         String res = await req.readAsString();
         Map json = jsonDecode(res);
 
-        String? user = json["user"];
-        String? password = json["password"];
-        if (db == null || user == null || password == null) {
-          throw Exception("Credentials Missing");
+        String? user = json["user"], password = json["password"];
+        if (user == null || password == null) {
+          return Response.badRequest(body: "Credentials Missing");
         }
 
-        dynamic row = await db?.getUser(user, password);
-        if (row == null) {
+        var row = await db?.getUser(user, password);
+        if (row == null || row.isEmpty == false) {
           return Response.forbidden(
             jsonEncode({"user": null, "isLogged": false}),
             headers: {"Content-Type": "application/json"},
           );
         }
         return Response.ok(
-          jsonEncode({"user": user, "isLogged": true}),
+          jsonEncode({"user": row["username"], "isLogged": true}),
           headers: {"Content-Type": "application/json"},
         );
       });

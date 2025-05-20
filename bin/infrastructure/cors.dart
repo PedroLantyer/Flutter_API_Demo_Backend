@@ -3,7 +3,7 @@ import 'package:shelf/shelf.dart';
 class Cors {
   static Middleware get middleware {
     final corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': "*",
       "Access-Control-Allow-Methods": "*",
       "Access-Control-Allow-Headers": "*",
     };

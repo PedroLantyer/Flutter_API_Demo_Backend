@@ -18,17 +18,48 @@ class DataBase {
 
   getUser(String username, String password) async {
     var result = await connection?.execute(
-      "SELECT * FROM users WHERE username = :username AND pwd = :pwd",
+      "SELECT * FROM users WHERE (username = :username OR email = :username) AND pwd = :pwd",
       {"username": username, "pwd": password},
     );
 
     if (result != null) {
       int rowCount = result.rows.length;
       if (rowCount > 0) {
-        dynamic row = result.rows.first.assoc();
+        Map<String, String?> row = result.rows.first.assoc();
         return row;
       }
     }
     return null;
+  }
+
+  createUser(String username, String password, String email) async {
+    try {
+      IResultSet? find = await connection?.execute(
+        "SELECT * FROM users WHERE username = :username OR email = :email",
+        {"username": username, "email": email, "pwd": password},
+      );
+
+      print(find?.isNotEmpty);
+      if (find != null && find.isNotEmpty) {
+        /* print("FIND is Null ${find == null}");
+        print("FIND is empty ${find.isNotEmpty}");
+        print("GOT HERE"); */
+        Map<String, dynamic> duplicate = find.rows.first.assoc();
+        return {
+          "result": "DUPLICATE",
+          "dupe": duplicate["username"] == username ? "Username" : "Email",
+        };
+      }
+
+      var result = await connection?.execute(
+        "INSERT INTO users (username, email, pwd) VALUES (:username, :email, :pwd)",
+        {"username": username, "email": email, "pwd": password},
+      );
+
+      return {"result": result != null ? "CREATED" : null};
+    } catch (e) {
+      print(e);
+      return {"result": null};
+    }
   }
 }

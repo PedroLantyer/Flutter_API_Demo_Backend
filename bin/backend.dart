@@ -1,5 +1,6 @@
 import 'package:shelf/shelf.dart';
 import 'api/login.dart';
+import 'api/register.dart';
 import 'infrastructure/custom_server.dart';
 import 'api/inventory.dart';
 import 'infrastructure/cors.dart';
@@ -10,7 +11,11 @@ void main() async {
   await db.initConnection();
 
   Handler cascadeHandler =
-      Cascade().add(Login(db).handler).add(Inventory().handler).handler;
+      Cascade()
+          .add(Login(db).handler)
+          .add(Register(db).handler)
+          .add(Inventory().handler)
+          .handler;
 
   var handler = Pipeline()
       .addMiddleware(logRequests())
